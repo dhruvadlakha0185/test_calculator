@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Calculator App</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>Simple Calculator</h1>
+
+    <form id="calcForm">
+      <input type="number" step="any" name="num1" id="num1" placeholder="Enter first number" required />
+      <input type="number" step="any" name="num2" id="num2" placeholder="Enter second number" required />
+
+      <select name="operation" id="operation">
+        <option value="add">Add</option>
+        <option value="subtract">Subtract</option>
+        <option value="multiply">Multiply</option>
+        <option value="divide">Divide</option>
+      </select>
+
+      <div class="buttons">
+        <button type="button" onclick="calculateResult()">Calculate</button>
+        <button type="button" onclick="explainResult()">Explain with AI</button>
+      </div>
+    </form>
+
+    <h2 id="result"></h2>
+    <p id="explanation"></p>
+  </div>
+
+  <script>
+    async function calculateResult() {
+      const form = document.getElementById("calcForm");
+      const formData = new FormData(form);
+
+      const response = await fetch("/calculate", {
+        method: "POST",
+        body: formData
+      });
+
+      const data = await response.json();
+
+      document.getElementById("result").innerText =
+        data.result !== undefined ? "Result: " + data.result : "Error: " + data.error;
+
+      document.getElementById("explanation").innerText = "";
+    }
+
+    async function explainResult() {
+      const form = document.getElementById("calcForm");
+      const formData = new FormData(form);
+
+      const response = await fetch("/explain", {
+        method: "POST",
+        body: formData
+      });
+
+      const data = await response.json();
+
+      document.getElementById("result").innerText =
+        data.result !== undefined ? "Result: " + data.result : "Error: " + data.error;
+
+      document.getElementById("explanation").innerText =
+        data.explanation || "";
+    }
+  </script>
+</body>
+</html>
